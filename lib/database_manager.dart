@@ -1,3 +1,4 @@
+import 'package:local_db_app/task_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -46,15 +47,20 @@ class DatabaseManager {
     print(id);
   }
 
-  Future<List<Map>> fetchAllTasks() async {
+  Future<List<TaskModel>> fetchAllTasks() async {
     final db = await database;
     List<Map> data = await db.rawQuery("SELECT * FROM $_tableName");
-    return data;
+    print(data);
+    List<TaskModel> tasks = [];
+    for(var m in data) {
+      tasks.add(TaskModel.fromJson(m));
+    }
+    return tasks;
   }
 
   Future<void> deleteTask(int id) async {
     final db = await database;
-    db.rawDelete("DELETE FROM $_nameColumn WHERE $_idColumn = ?", [id]);
+    db.rawDelete("DELETE FROM $_tableName WHERE $_idColumn = ?", [id]);
   }
 
   Future<void> editTask(int id, String newName) async {
